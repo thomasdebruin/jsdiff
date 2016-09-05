@@ -24,9 +24,29 @@ const extendedWordChars = /^[a-zA-Z\u{C0}-\u{FF}\u{D8}-\u{F6}\u{F8}-\u{2C6}\u{2C
 const reWhitespace = /\S/;
 
 export const wordDiff = new Diff();
+
 wordDiff.equals = function(left, right) {
-  return left === right || (this.options.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right));
+    if (this.options.ignoreCase) {
+        left = left.toLowerCase();
+        right = right.toLowerCase();
+    }
+    if (this.options.replaceList) {
+        var rl = this.options.replaceList;
+        for (i = 0; i <= rl.length; i += 1) {
+            var regex = new RegExp(rl[i][0], "g");
+            left = left.replace(regex, rl[i][1]);
+            right = right.replace(regex, rl[i][1]);
+        }
+    }
 };
+
+options = {
+    ignoreCase: true,
+    replaceList: [
+        ['ij', 'y'],
+        ['\.', ','],
+    ]
+}
 wordDiff.tokenize = function(value) {
   let tokens = value.split(/(\s+|\b)/);
 
